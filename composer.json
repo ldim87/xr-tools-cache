@@ -1,0 +1,22 @@
+{
+  "name": "1kmenu/cache-adapter",
+  "description": "Adapter for \\XrTools\\CacheManager Interface",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dmitriy Lukin",
+      "email": "lukin.d87@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "1kmenu/cache-manager": "@dev",
+    "ext-memcached": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "XrTools\\": "src"
+    }
+  }
+}
