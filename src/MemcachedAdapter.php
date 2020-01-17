@@ -304,4 +304,24 @@ class MemcachedAdapter implements CacheManager {
 
 		return $this->connection;
 	}
+
+    /**
+     * Получение штампа для ключей
+     * @param	string		$key	Cache key
+     * @param	integer		$exp	Cache expiration time in seconds
+     * @return	string		Version time
+     */
+    function getStamp($key, $exp = 3600)
+    {
+        $time = $this->get($key);
+
+        if ($time === false)
+        {
+            $time = microtime(true) . mt_rand(1000, 9999);
+
+            $this->set($key, $time, $exp);
+        }
+
+        return $time;
+    }
 }
