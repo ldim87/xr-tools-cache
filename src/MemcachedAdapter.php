@@ -222,14 +222,14 @@ class MemcachedAdapter implements CacheManager {
 	 * @param  [type] $key [description]
 	 * @return [type]      [description]
 	 */
-	public function delete($key){
+	public function del($key){
 		// skip empty entries
 		if(!$key){
 			return false;
 		}
 
 		if(is_array($key)){
-			return $this->deleteMulti($key);
+			return $this->delMulti($key);
 		}
 
 		// get connection
@@ -239,11 +239,11 @@ class MemcachedAdapter implements CacheManager {
 	}
 
 	/**
-	 * [deleteMulti description]
+	 * [delMulti description]
 	 * @param  array  $keys [description]
 	 * @return [type]       [description]
 	 */
-	public function deleteMulti(array $keys){
+	public function delMulti(array $keys){
 		// skip empty entries
 		if(!$keys){
 			return false;
