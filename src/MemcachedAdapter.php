@@ -28,6 +28,12 @@ class MemcachedAdapter implements CacheManager {
 	private $defaultExpirationSeconds = 3600;
 
 	/**
+	 * Default return on null result
+	 * @var boolean
+	 */
+	private $returnOnNull = false;
+
+	/**
 	 * [__construct description]
 	 * @param array|null $connectionParams [description]
 	 */
@@ -116,7 +122,7 @@ class MemcachedAdapter implements CacheManager {
 			if($unjson){
 				$result = json_decode($data, true);
 			} else{
-				$result = $data;
+				$result = $data ?? $this->returnOnNull;
 			}
 		}
 
