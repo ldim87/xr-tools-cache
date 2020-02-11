@@ -311,28 +311,28 @@ class MemcachedAdapter implements CacheManager {
 		return $this->connection;
 	}
 
-    /**
-     * Получение штампа для ключей
-     * @param	string		$key	Cache key
-     * @param	integer		$exp	Cache expiration time in seconds
-     * @return	string		Version time
-     */
-    function getStamp($key, $exp = 3600)
-    {
-        $time = $this->get($key);
+	/**
+	 * Get version key stamp
+	 * 
+	 * @param	string		$key	Cache key
+	 * @param	integer		$exp	Cache expiration time in seconds
+	 * @return	string		Version time
+	 */
+	public function getStamp(string $key, int $exp = 3600){
 
-        if ($time === false)
-        {
-            $time = microtime(true) . mt_rand(1000, 9999);
+		$time = $this->get($key);
 
-            $this->set($key, $time, $exp);
-        }
+		if ($time === false){
 
-        return $time;
-    }
+			$time = microtime(true) . mt_rand(1000, 9999);
+
+			$this->set($key, $time, $exp);
+		}
+
+		return $time;
+	}
 	
 	/**
-	 * mc_increment()
 	 * Increment numeric item's value
 	 *
 	 * @param string $key
