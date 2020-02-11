@@ -333,13 +333,17 @@ class MemcachedAdapter implements CacheManager {
 	
 	/**
 	 * mc_increment()
-	 * Increase the cache by 1 point
+	 * Increment numeric item's value
 	 *
-	 * @param      $key
+	 * @param string $key
+	 * @param int    $offset
+	 * @param int    $initial_value
+	 * @param int    $expiry
 	 *
 	 * @return bool
+	 * @see \Memcached::increment()
 	 */
-	function increment($key){
+	public function increment(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0){
 		// skip empty entries
 		if(!$key){
 			return false;
@@ -348,6 +352,6 @@ class MemcachedAdapter implements CacheManager {
 		// get connection
 		$cache = $this->getConnection();
 		
-		return $cache->increment($key);
+		return $cache->increment($key, $offset, $initial_value, $expiry);
 	}
 }
