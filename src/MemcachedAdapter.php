@@ -324,7 +324,7 @@ class MemcachedAdapter implements CacheManager {
 
 		if ($time === false){
 
-			$time = microtime(true) . mt_rand(1000, 9999);
+			$time = microtime(true) . mt_rand(10000, 99999);
 
 			$this->set($key, $time, $exp);
 		}
@@ -343,15 +343,49 @@ class MemcachedAdapter implements CacheManager {
 	 * @return bool
 	 * @see \Memcached::increment()
 	 */
-	public function increment(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0){
+	public function increment(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0)
+	{
 		// skip empty entries
-		if(!$key){
+		if (empty($key)) {
 			return false;
 		}
-		
+
 		// get connection
 		$cache = $this->getConnection();
-		
+
 		return $cache->increment($key, $offset, $initial_value, $expiry);
+	}
+
+	/**
+	 * Decrement
+	 * @param string $key
+	 * @param int $offset
+	 * @param int $initial_value
+	 * @param int $expiry
+	 * @return bool|int
+	 */
+	public function decrement(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0)
+	{
+		// skip empty entries
+		if (empty($key)) {
+			return false;
+		}
+
+		// get connection
+		$cache = $this->getConnection();
+
+		return $cache->decrement($key, $offset, $initial_value, $expiry);
+	}
+
+	/**
+	 * Flush
+	 * @return bool
+	 */
+	public function flush()
+	{
+		// get connection
+		$cache = $this->getConnection();
+
+		return $cache->flush();
 	}
 }
