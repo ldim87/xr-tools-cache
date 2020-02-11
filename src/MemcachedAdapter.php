@@ -330,4 +330,24 @@ class MemcachedAdapter implements CacheManager {
 
         return $time;
     }
+	
+	/**
+	 * mc_increment()
+	 * Increase the cache by 1 point
+	 *
+	 * @param      $key
+	 *
+	 * @return bool
+	 */
+	function increment($key){
+		// skip empty entries
+		if(!$key){
+			return false;
+		}
+		
+		// get connection
+		$cache = $this->getConnection();
+		
+		return $cache->increment($key);
+	}
 }
