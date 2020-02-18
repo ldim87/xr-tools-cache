@@ -13,25 +13,25 @@ class MemcachedAdapter implements CacheManager {
 	 * [$connection description]
 	 * @var [type]
 	 */
-	private $connection;
+	protected $connection;
 
 	/**
 	 * [$connectionParams description]
 	 * @var [type]
 	 */
-	private $connectionParams;
+	protected $connectionParams;
 	
 	/**
 	 * [$defaultExpirationSeconds description]
 	 * @var integer
 	 */
-	private $defaultExpirationSeconds = 3600;
+	protected $defaultExpirationSeconds = 3600;
 
 	/**
 	 * Default return on null result
 	 * @var boolean
 	 */
-	private $returnOnNull = false;
+	protected $returnOnNull = false;
 
 	/**
 	 * [__construct description]
@@ -49,7 +49,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param  array  $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function validateSettings(array $settings){
+	protected function validateSettings(array $settings){
 		// mandatory settings
 		if(empty($settings['servers']) || !is_array($settings['servers'])){
 			throw new \Exception('Servers list is empty or invalid!');
@@ -70,7 +70,7 @@ class MemcachedAdapter implements CacheManager {
 	 * [setDefaultExpiration description]
 	 * @param int $seconds [description]
 	 */
-	public function setDefaultExpiration(int $seconds){
+	protected function setDefaultExpiration(int $seconds){
 		// set default expiration
 		$this->defaultExpirationSeconds = $this->getExpiration($seconds);
 	}
@@ -80,7 +80,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param  int|null $seconds [description]
 	 * @return [type]            [description]
 	 */
-	public function getExpiration(int $seconds = null){
+	protected function getExpiration(int $seconds = null){
 		// get default expiration
 		if(!isset($seconds)){
 			return $this->defaultExpirationSeconds;
@@ -266,7 +266,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param  array  $settings [description]
 	 * @return [type]           [description]
 	 */
-	public function connect(array $settings){
+	protected function connect(array $settings){
 
 		// validate settings
 		$settings = $this->validateSettings($settings);
@@ -302,7 +302,7 @@ class MemcachedAdapter implements CacheManager {
 	 * [getConnection description]
 	 * @return [type] [description]
 	 */
-	public function getConnection(){
+	protected function getConnection(){
 		// connect if not connected
 		if(!isset($this->connection)){
 			$this->connection = $this->connect($this->connectionParams);
@@ -334,17 +334,16 @@ class MemcachedAdapter implements CacheManager {
 	
 	/**
 	 * Increment numeric item's value
-	 *
+	 * 
 	 * @param string $key
 	 * @param int    $offset
 	 * @param int    $initial_value
 	 * @param int    $expiry
-	 *
 	 * @return bool
 	 * @see \Memcached::increment()
 	 */
-	public function increment(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0)
-	{
+	public function increment(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0){
+
 		// skip empty entries
 		if (empty($key)) {
 			return false;
@@ -364,8 +363,8 @@ class MemcachedAdapter implements CacheManager {
 	 * @param int $expiry
 	 * @return bool|int
 	 */
-	public function decrement(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0)
-	{
+	public function decrement(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0){
+
 		// skip empty entries
 		if (empty($key)) {
 			return false;
@@ -381,8 +380,8 @@ class MemcachedAdapter implements CacheManager {
 	 * Flush
 	 * @return bool
 	 */
-	public function flush()
-	{
+	public function flush(){
+
 		// get connection
 		$cache = $this->getConnection();
 
