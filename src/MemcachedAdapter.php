@@ -387,4 +387,19 @@ class MemcachedAdapter implements CacheManager {
 
 		return $cache->flush();
 	}
+	
+	/**
+	 * Get server pool statistics
+	 * @return array Array of server statistics, one entry per server.
+	 * @see \Memcached::getStats()
+	 */
+	public function getStats(){
+
+		// get connection
+		$cache = $this->getConnection();
+
+		return $cache->getStats();
+	}
+	
+	
 }
