@@ -5,6 +5,8 @@
 
 namespace XrTools;
 
+use \Memcached;
+
 /**
  * Adapter for \XrTools\CacheManager Interface
  */
@@ -20,7 +22,13 @@ class MemcachedAdapter implements CacheManager {
 	 * @var [type]
 	 */
 	protected $connectionParams;
-	
+
+	/**
+	 * [$connectionOptions description]
+	 * @var array
+	 */
+	protected $connectionOptions = [];
+
 	/**
 	 * [$defaultExpirationSeconds description]
 	 * @var integer
@@ -41,6 +49,16 @@ class MemcachedAdapter implements CacheManager {
 		// connection settings
 		if(isset($connectionParams)){
 			$this->setConnectionParams($connectionParams);
+		}
+	}
+
+	function setOptions(array $opt){
+		if(!empty($opt['use_binary_protocol'])){
+			$this->connectionOptions[Memcached::OPT_BINARY_PROTOCOL] = true;
+		}
+
+		if(!empty($opt['use_igbinary'])){
+			$this->connectionOptions[Memcached::OPT_SERIALIZER] = Memcached::SERIALIZER_IGBINARY;
 		}
 	}
 
@@ -271,7 +289,11 @@ class MemcachedAdapter implements CacheManager {
 		// validate settings
 		$settings = $this->validateSettings($settings);
 
-		$connection = new \Memcached();
+		$connection = new Memcached();
+
+		if($this->connectionOptions){
+			$connection->setOptions($this->connectionOptions);
+		}
 
 		$connection->addServers($settings['servers']);
 		
@@ -340,7 +362,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param int    $initial_value
 	 * @param int    $expiry
 	 * @return bool
-	 * @see \Memcached::increment()
+	 * @see Memcached::increment()
 	 */
 	public function increment(string $key, int $offset = 1, int $initial_value = 0, int $expiry = 0){
 
@@ -391,7 +413,7 @@ class MemcachedAdapter implements CacheManager {
 	/**
 	 * Get server pool statistics
 	 * @return array Array of server statistics, one entry per server.
-	 * @see \Memcached::getStats()
+	 * @see Memcached::getStats()
 	 */
 	public function getStats(){
 
