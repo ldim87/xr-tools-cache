@@ -35,7 +35,7 @@ class CacheVersion
 	 * @param string       $name
 	 * @param int          $exp
 	 */
-	public function __construct( CacheManager $mc, string $name, int $exp = 3600)
+	public function __construct(CacheManager $mc, string $name, int $exp = 3600)
 	{
 		$this->mc   = $mc;
 		$this->name = $name;
@@ -72,6 +72,6 @@ class CacheVersion
 	 */
 	public function new()
 	{
-		$this->mc->del($this->name);
+		return $this->mc->del($this->name);
 	}
 }
