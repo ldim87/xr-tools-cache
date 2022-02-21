@@ -42,6 +42,12 @@ class MemcachedAdapter implements CacheManager {
 	protected $returnOnNull = false;
 
 	/**
+	 * Persistent instance ID
+	 * @var string
+	 */
+	protected $persistent_id = null;
+
+	/**
 	 * [__construct description]
 	 * @param array|null $connectionParams [description]
 	 */
@@ -53,12 +59,25 @@ class MemcachedAdapter implements CacheManager {
 	}
 
 	function setOptions(array $opt){
+
+		if(!empty($opt['persistent_id'])){
+			$this->persistent_id = $opt['persistent_id'];
+		}
+		
 		if(!empty($opt['use_binary_protocol'])){
 			$this->connectionOptions[Memcached::OPT_BINARY_PROTOCOL] = true;
 		}
 
 		if(!empty($opt['use_igbinary'])){
 			$this->connectionOptions[Memcached::OPT_SERIALIZER] = Memcached::SERIALIZER_IGBINARY;
+		}
+
+		if(!empty($opt['tcp_no_delay'])){
+			$this->connectionOptions[Memcached::OPT_TCP_NODELAY] = true;
+		}
+		
+		if(!empty($opt['no_compression'])){
+			$this->connectionOptions[Memcached::OPT_COMPRESSION] = false;
 		}
 	}
 
@@ -136,7 +155,9 @@ class MemcachedAdapter implements CacheManager {
 
 		$data = $cache->get($key);
 		
-		if($cache->getResultCode() == 0){
+		$resultCode = $cache->getResultCode();
+
+		if($resultCode === 0){
 			if($unjson){
 				$result = json_decode($data, true);
 			} else{
@@ -166,8 +187,10 @@ class MemcachedAdapter implements CacheManager {
 		$result = false;
 
 		$data = $cache->getMulti($keys);
-		
-		if($cache->getResultCode() == 0){
+
+		$resultCode = $cache->getResultCode();
+
+		if($resultCode === 0){
 			// default array
 			$result = [];
 
@@ -208,7 +231,9 @@ class MemcachedAdapter implements CacheManager {
 
 		$cache->set($key, $json ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value, $expiration);
 
-		return $cache->getResultCode() == 0;
+		$resultCode = $cache->getResultCode();
+
+		return $resultCode === 0;
 	}
 
 	/**
@@ -237,7 +262,9 @@ class MemcachedAdapter implements CacheManager {
 		
 		$cache->setMulti($data, $this->getExpiration($expiration));
 
-		return $cache->getResultCode() == 0;
+		$resultCode = $cache->getResultCode();
+
+		return $resultCode === 0;
 	}
 	
 	/**
@@ -289,13 +316,18 @@ class MemcachedAdapter implements CacheManager {
 		// validate settings
 		$settings = $this->validateSettings($settings);
 
-		$connection = new Memcached();
+		$connection = new Memcached($this->persistent_id);
 
-		if($this->connectionOptions){
-			$connection->setOptions($this->connectionOptions);
+		$serverList = $connection->getServerList();
+
+		if(empty($serverList)){
+
+			if($this->connectionOptions){
+				$connection->setOptions($this->connectionOptions);
+			}
+
+			$connection->addServers($settings['servers']);
 		}
-
-		$connection->addServers($settings['servers']);
 		
 		$version = $connection->getVersion();
 
@@ -306,7 +338,7 @@ class MemcachedAdapter implements CacheManager {
 		$connectionKey = null;
 
 		foreach ($version as $con_key){
-			if(!$con_key){
+			if(!$con_key || $con_key == '255.255.255'){
 				continue;
 			}
 
