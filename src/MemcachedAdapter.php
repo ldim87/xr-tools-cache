@@ -79,6 +79,11 @@ class MemcachedAdapter implements CacheManager {
 		if(!empty($opt['no_compression'])){
 			$this->connectionOptions[Memcached::OPT_COMPRESSION] = false;
 		}
+
+		if(!empty($opt['distribution_consistent'])){
+			$this->connectionOptions[Memcached::OPT_DISTRIBUTION] = Memcached::DISTRIBUTION_CONSISTENT;
+			$this->connectionOptions[Memcached::OPT_LIBKETAMA_COMPATIBLE] = true;
+		}
 	}
 
 	/**
