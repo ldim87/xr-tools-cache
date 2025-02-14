@@ -51,7 +51,7 @@ class MemcachedAdapter implements CacheManager {
 	 * [__construct description]
 	 * @param array|null $connectionParams [description]
 	 */
-	function __construct(array $connectionParams = null){
+	function __construct(?array $connectionParams = null){
 		// connection settings
 		if(isset($connectionParams)){
 			$this->setConnectionParams($connectionParams);
@@ -122,7 +122,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param  int|null $seconds [description]
 	 * @return [type]            [description]
 	 */
-	protected function getExpiration(int $seconds = null){
+	protected function getExpiration(?int $seconds = null){
 		// get default expiration
 		if(!isset($seconds)){
 			return $this->defaultExpirationSeconds;
@@ -219,7 +219,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param int|null     $expiration [description]
 	 * @param bool|boolean $json       [description]
 	 */
-	public function set($key, $value = null, int $expiration = null, bool $json = false){
+	public function set($key, $value = null, ?int $expiration = null, bool $json = false){
 		// skip empty entries
 		if(!$key){
 			return false;
@@ -247,7 +247,7 @@ class MemcachedAdapter implements CacheManager {
 	 * @param int|null     $expiration [description]
 	 * @param bool|boolean $json       [description]
 	 */
-	public function setMulti(array $keys, int $expiration = null, bool $json = false){
+	public function setMulti(array $keys, ?int $expiration = null, bool $json = false){
 		// skip empty entries
 		if(!$keys){
 			return false;
